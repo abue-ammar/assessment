@@ -9,16 +9,17 @@ Unified project containing a raw PHP REST API backend and a React + TypeScript +
 
 ---
 
-## Backend
+## Quick Start (Run from Root Directory)
 
-### Requirements
+### Prerequisites
 
-- PHP 8.1+ (PDO + MySQL extensions enabled)
-- MySQL 8+ (or MariaDB equivalent)
+- **PHP**: 8.1+ (PDO + MySQL extensions enabled)
+- **MySQL**: 8+ (or MariaDB equivalent)
+- **Node.js**: 22.12+ (required for Vite 7 and React 19)
 
-### 1. Configure Environment
+### 1. Setup Backend
 
-Copy example env and adjust credentials:
+Configure database environment:
 
 ```bash
 cp backend/.env.example backend/.env
@@ -26,25 +27,57 @@ cp backend/.env.example backend/.env
 
 Edit `backend/.env` values (`DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`). Default DB name is `smart_device_control`.
 
-### 2. Create Database & Tables
-
-Run the SQL bootstrap (creates DB, tables, indexes, and seed rows if missing):
+Create database and tables:
 
 ```bash
 mysql -u${DB_USER:-root} -p < backend/database.sql
 ```
 
-If the database already exists, only missing tables / seed rows are added.
-
-### 3. Start Development Server
-
-From `backend/` directory:
+Start PHP development server:
 
 ```bash
-php -S localhost:8000 router.php
+php -S localhost:8000 -t backend backend/router.php
 ```
 
-This serves API endpoints at `http://localhost:8000/api/...`.
+The API will be available at `http://localhost:8000/api/...`
+
+### 2. Setup Frontend
+
+Install dependencies:
+
+```bash
+npm install --prefix frontend
+```
+
+Start development server:
+
+```bash
+npm run dev --prefix frontend
+```
+
+Visit `http://localhost:5173` (ensure backend is running at `http://localhost:8000`).
+
+---
+
+## Backend
+
+### Folder Structure
+
+```
+backend/
+├── database.sql          # SQL schema and seed data
+├── router.php           # Main router for API endpoints
+├── api/
+│   ├── devices.php      # Devices CRUD endpoints
+│   └── presets.php      # Presets CRUD endpoints
+└── config/
+    └── database.php     # Database connection configuration
+```
+
+### Requirements
+
+- PHP 8.1+ (PDO + MySQL extensions enabled)
+- MySQL 8+ (or MariaDB equivalent)
 
 ### API Overview
 
@@ -142,28 +175,131 @@ PUT body example:
 { "device_state": { "power": false, "brightness": 50, "colorTemp": "cool" } }
 ```
 
-### CORS
+### API Testing with cURL
 
-Simple permissive CORS echoes incoming `Origin` allowing local development; adjust for production.
+#### Devices Endpoints
+
+```bash
+# Get all devices
+curl http://localhost:8000/api/devices
+
+# Get device by ID (using query parameter)
+curl "http://localhost:8000/api/devices?id=1"
+
+# Create device (light)
+curl -X POST http://localhost:8000/api/devices \
+  -H "Content-Type: application/json" \
+  -d '{"type":"light","name":"Living Room Light","settings":{"power":false,"brightness":100,"colorTemp":"cool"}}'
+
+# Create device (fan)
+curl -X POST http://localhost:8000/api/devices \
+  -H "Content-Type: application/json" \
+  -d '{"type":"fan","name":"Bedroom Fan","settings":{"power":false,"speed":50}}'
+
+# Update device
+curl -X PUT http://localhost:8000/api/devices/1 \
+  -H "Content-Type: application/json" \
+  -d '{"settings":{"power":true,"brightness":80,"colorTemp":"warm"}}'
+
+# Delete device (using query parameter)
+curl -X DELETE "http://localhost:8000/api/devices?id=1"
+```
+
+#### Presets Endpoints
+
+```bash
+# Get all presets
+curl http://localhost:8000/api/presets
+
+# Get preset by ID
+curl http://localhost:8000/api/presets/1
+
+# Create preset (light)
+curl -X POST http://localhost:8000/api/presets \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Night Light","device_type":"light","device_state":{"power":true,"brightness":30,"colorTemp":"warm"}}'
+
+# Create preset (fan)
+curl -X POST http://localhost:8000/api/presets \
+  -H "Content-Type: application/json" \
+  -d '{"name":"High Speed Fan","device_type":"fan","device_state":{"power":true,"speed":80}}'
+
+# Update preset
+curl -X PUT http://localhost:8000/api/presets/1 \
+  -H "Content-Type: application/json" \
+  -d '{"device_state":{"power":false,"brightness":50,"colorTemp":"cool"}}'
+
+# Delete preset
+curl -X DELETE http://localhost:8000/api/presets/1
+```
 
 ---
 
 ## Frontend
 
-### Requirements
+### Folder Structure
 
-- Node.js 22.12+ (due to Vite 7 usage & React 19). Use a version manager if needed: `nvm install 22 && nvm use 22`.
-
-### Install & Run
-
-From `frontend/`:
-
-```bash
-npm install
-npm run dev
+```
+frontend/
+├── public/              # Static assets
+├── src/
+│   ├── components/
+│   │   ├── canvas/      # Canvas area components
+│   │   │   ├── canvas.tsx
+│   │   │   ├── canvas-content.tsx
+│   │   │   ├── canvas-header.tsx
+│   │   │   ├── canvas-actions.tsx
+│   │   │   └── drag-indicator.tsx
+│   │   ├── controls/    # Device control panels
+│   │   │   ├── light-control-panel.tsx
+│   │   │   ├── fan-control-panel.tsx
+│   │   │   ├── brightness-slider.tsx
+│   │   │   ├── color-temperature.tsx
+│   │   │   ├── power-toggle.tsx
+│   │   │   └── speed-slider.tsx
+│   │   ├── dnd/        # Drag and drop components
+│   │   │   └── drag-overlay-wrapper.tsx
+│   │   ├── fan/        # Fan visualization
+│   │   │   └── fan-visualization.tsx
+│   │   ├── light/      # Light visualization
+│   │   │   └── light-bulb.tsx
+│   │   ├── modals/     # Modal components
+│   │   │   └── save-preset-modal.tsx
+│   │   └── sidebar/    # Sidebar components
+│   │       ├── sidebar.tsx
+│   │       ├── devices-section.tsx
+│   │       ├── presets-section.tsx
+│   │       ├── draggable-device-item.tsx
+│   │       └── preset-item.tsx
+│   ├── services/
+│   │   └── api.ts      # API service layer
+│   ├── store/
+│   │   └── app-store.ts # Zustand state management
+│   ├── App.tsx         # Main app component
+│   ├── main.tsx        # Entry point
+│   └── index.css       # Global styles
+├── index.html
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
 ```
 
-Visit the printed local URL (typically `http://localhost:5173`). Ensure backend is running at `http://localhost:8000`.
+### Requirements
+
+- **Node.js**: 22.12+ (required for Vite 7 and React 19)
+  - Use a version manager if needed: `nvm install 22 && nvm use 22`
+
+### Commands (Run from Root Directory)
+
+```bash
+npm install --prefix frontend    # Install dependencies
+npm run dev --prefix frontend    # Start development server
+npm run build --prefix frontend  # Build for production
+npm run preview --prefix frontend # Preview production build
+npm run lint --prefix frontend   # Run ESLint
+npm run format --prefix frontend # Format code with Prettier
+```
 
 ### Environment Variables
 
@@ -175,21 +311,19 @@ cp frontend/.env.example frontend/.env
 
 `VITE_API_BASE_URL` defaults to `http://localhost:8000/api` if unset.
 
-### Build
-
-```bash
-npm run build
-```
-
-Outputs production artifacts to `frontend/dist/`.
-
 ### Tech Stack
 
-React 19 · TypeScript · Vite · Tailwind CSS · dnd-kit · Zustand · Axios · Sonner · Lucide Icons
+- **React 19** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **Tailwind CSS** - Styling
+- **@dnd-kit/core** - Drag and drop functionality
+- **Zustand** - State management with persistence
+- **Axios** - HTTP client
+- **Sonner** - Toast notifications
+- **Lucide React** - Icons
 
----
-
-## Data Shapes (Frontend TypeScript)
+### Data Shapes (TypeScript)
 
 Light state:
 
