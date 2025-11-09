@@ -1,11 +1,12 @@
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { DndContext } from "@dnd-kit/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import { Canvas } from "./components/canvas/canvas";
 import { DragIndicator } from "./components/canvas/drag-indicator";
 import { DragOverlayWrapper } from "./components/dnd/drag-overlay-wrapper";
 import { Sidebar } from "./components/sidebar/sidebar";
+import { api } from "./services/api";
 import { useAppStore, type FanState, type LightState } from "./store/app-store";
 
 interface DragData {
@@ -19,14 +20,21 @@ export default function App() {
   const [activeData, setActiveData] = useState<DragData | null>(null);
   const setCanvasDevice = useAppStore((state) => state.setCanvasDevice);
   const canvasDevice = useAppStore((state) => state.canvasDevice);
-  const presets = useAppStore((state) => state.presets);
+  const loadDevices = useAppStore((state) => state.loadDevices);
+  const loadPresets = useAppStore((state) => state.loadPresets);
+
+  // Load devices and presets from backend on mount
+  useEffect(() => {
+    loadDevices();
+    loadPresets();
+  }, [loadDevices, loadPresets]);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
     setActiveData((event.active.data.current as DragData) || null);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     setActiveId(null);
     setActiveData(null);
     const { active, over } = event;
@@ -53,24 +61,32 @@ export default function App() {
           },
         });
         setActiveDevice("fan");
-      } else if (dragData?.type === "preset") {
-        const preset = presets.find((p) => p.id === dragData.presetId);
-        if (preset) {
-          if (preset.deviceType === "light") {
-            setCanvasDevice({
-              type: "light",
-              lightState: preset.state as LightState,
-              presetId: preset.id,
-            });
-            setActiveDevice("light");
-          } else if (preset.deviceType === "fan") {
-            setCanvasDevice({
-              type: "fan",
-              fanState: preset.state as FanState,
-              presetId: preset.id,
-            });
-            setActiveDevice("fan");
+      } else if (dragData?.type === "preset" && dragData.presetId) {
+        try {
+          // Fetch preset from backend by ID
+          console.log("Fetching preset by ID:", dragData.presetId);
+          const preset = await api.presets.getById(dragData.presetId);
+          console.log("Loaded preset:", preset);
+
+          if (preset) {
+            if (preset.device_type === "light") {
+              setCanvasDevice({
+                type: "light",
+                lightState: preset.device_state as LightState,
+                presetId: preset.id.toString(),
+              });
+              setActiveDevice("light");
+            } else if (preset.device_type === "fan") {
+              setCanvasDevice({
+                type: "fan",
+                fanState: preset.device_state as FanState,
+                presetId: preset.id.toString(),
+              });
+              setActiveDevice("fan");
+            }
           }
+        } catch (error) {
+          console.error("Failed to load preset:", error);
         }
       }
     }

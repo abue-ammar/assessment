@@ -3,7 +3,7 @@ import { useState } from "react";
 
 interface SavePresetModalProps {
   deviceType: "light" | "fan";
-  onSave: (name: string) => boolean;
+  onSave: (name: string) => Promise<boolean>;
   onClose: () => void;
 }
 
@@ -11,10 +11,10 @@ export function SavePresetModal({ onSave, onClose }: SavePresetModalProps) {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      const success = onSave(name.trim());
+      const success = await onSave(name.trim());
       if (!success) {
         setError("Preset name already exists");
       }

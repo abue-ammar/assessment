@@ -1,24 +1,55 @@
-# Logs
-logs
+# Root Git Ignore
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Vite / Cache
+frontend/.vite
+frontend/.eslintcache
 
-# Editor directories and files
+# TypeScript build info
+**/*.tsbuildinfo
+
+# Environment files
+*.env
+*.env.local
+backend/.env
+frontend/.env
+
+# macOS cruft
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor settings
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+!.vscode/settings.json
+
+# PHP / Composer (if added later)
+vendor/
+composer.lock
+
+# Coverage / Test Outputs
+coverage/
+*.lcov
+
+# Misc caches
+.cache/
+tmp/
+*.swp
+
+# Build artifacts (generic)
+dist/
+build/
+
+# Ignore sql dumps (keep canonical one)
+*.sql
+!backend/database.sql

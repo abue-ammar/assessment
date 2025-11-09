@@ -13,7 +13,7 @@ export function CanvasActions() {
   const presets = useAppStore((state) => state.presets);
   const setHasInteraction = useAppStore((state) => state.setHasInteraction);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!canvasDevice) return;
     if (canvasDevice.presetId) {
       const currentState =
@@ -22,7 +22,7 @@ export function CanvasActions() {
           : canvasDevice.fanState;
 
       if (currentState) {
-        updatePreset(canvasDevice.presetId, currentState);
+        await updatePreset(canvasDevice.presetId, currentState);
         setHasInteraction(false);
         toast.success("Preset updated");
       }
@@ -31,7 +31,7 @@ export function CanvasActions() {
     }
   };
 
-  const handleSavePreset = (name: string): boolean => {
+  const handleSavePreset = async (name: string): Promise<boolean> => {
     if (!canvasDevice) return false;
 
     const duplicateExists = presets.some(
@@ -41,23 +41,28 @@ export function CanvasActions() {
       return false;
     }
 
+    let success = false;
     if (canvasDevice.type === "light" && canvasDevice.lightState) {
-      addPreset({
+      success = await addPreset({
         name,
         deviceType: "light",
         state: canvasDevice.lightState,
       });
     } else if (canvasDevice.type === "fan" && canvasDevice.fanState) {
-      addPreset({
+      success = await addPreset({
         name,
         deviceType: "fan",
         state: canvasDevice.fanState,
       });
     }
-    setShowModal(false);
-    setHasInteraction(false);
-    toast.success("Preset saved");
-    return true;
+    
+    if (success) {
+      setShowModal(false);
+      setHasInteraction(false);
+      toast.success("Preset saved");
+      return true;
+    }
+    return false;
   };
 
   if (!hasInteraction || !canvasDevice) {
