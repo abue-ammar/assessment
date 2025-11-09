@@ -1,0 +1,14 @@
+{
+  "name": "rekindle/smart-device-api",
+  "description": "Smart Device Control REST API",
+  "type": "project",
+  "require": {
+    "php": ">=8.1",
+    "ext-pdo": "*",
+    "ext-pdo_mysql": "*",
+    "ext-json": "*"
+  },
+  "scripts": {
+    "start": "php -S 0.0.0.0:$PORT -t . router.php"
+  }
+}
