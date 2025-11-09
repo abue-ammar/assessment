@@ -14,6 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $uri = $_SERVER['REQUEST_URI'];
 $uri = parse_url($uri, PHP_URL_PATH);
 
+// Health check endpoint
+if ($uri === '/api/health' || $uri === '/health') {
+    require __DIR__ . '/api/health.php';
+    return true;
+}
+
 // Route API requests (handles both /api/presets and /api/presets/{id})
 if (preg_match('/^\/api\/presets/', $uri)) {
     require __DIR__ . '/api/presets.php';
