@@ -1,4 +1,5 @@
 import { useDraggable } from "@dnd-kit/core";
+import { Fan, Lightbulb } from "lucide-react";
 
 interface PresetItemProps {
   id: string;
@@ -12,19 +13,21 @@ export function PresetItem({ id, name, deviceType }: PresetItemProps) {
     data: { type: "preset", presetId: id },
   });
 
+  const Icon = deviceType === "light" ? Lightbulb : Fan;
+
   return (
     <div
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`cursor-grab rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 transition-colors hover:bg-slate-700 active:cursor-grabbing ${
-        isDragging ? "opacity-50" : ""
+      className={`flex w-full items-center gap-3 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-white transition-colors hover:bg-slate-700 ${
+        isDragging
+          ? "cursor-grabbing opacity-50"
+          : "cursor-grab active:cursor-grabbing"
       }`}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-white">{name}</span>
-        <span className="text-xs text-slate-400 capitalize">{deviceType}</span>
-      </div>
+      <Icon size={18} className="text-gray-400" />
+      <span>{name}</span>
     </div>
   );
 }

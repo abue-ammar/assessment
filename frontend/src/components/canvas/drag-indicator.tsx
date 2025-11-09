@@ -16,7 +16,7 @@ export function DragIndicator() {
           Drag items from here
         </span>
         <span className="text-sm text-white md:hidden">
-          Press and hold and drag
+          Press hold and drag
         </span>
       </div>
     </div>

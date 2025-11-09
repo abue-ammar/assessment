@@ -21,7 +21,7 @@ interface DragData {
 }
 
 export default function App() {
-  const [activeDevice, setActiveDevice] = useState("light");
+  const [activeDevice, setActiveDevice] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeData, setActiveData] = useState<DragData | null>(null);
   const setCanvasDevice = useAppStore((state) => state.setCanvasDevice);
