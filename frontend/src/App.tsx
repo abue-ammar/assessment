@@ -33,7 +33,7 @@ export default function App() {
   const mouseSensor = useSensor(MouseSensor);
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
-      delay: 250,
+      delay: 100,
       tolerance: 5,
     },
   });

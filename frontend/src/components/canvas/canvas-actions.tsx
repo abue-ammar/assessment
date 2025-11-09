@@ -55,7 +55,7 @@ export function CanvasActions() {
         state: canvasDevice.fanState,
       });
     }
-    
+
     if (success) {
       setShowModal(false);
       setHasInteraction(false);
@@ -71,16 +71,16 @@ export function CanvasActions() {
 
   return (
     <>
-      <div className="flex gap-3">
+      <div className="flex gap-2 md:gap-3">
         <button
           onClick={clearCanvas}
-          className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-white transition-colors hover:bg-slate-700"
+          className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-white transition-colors hover:bg-slate-700 md:px-4 md:py-2 md:text-base"
         >
           Clear
         </button>
         <button
           onClick={handleSave}
-          className="rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600"
+          className="rounded-lg bg-blue-500 px-3 py-1.5 text-sm text-white transition-colors hover:bg-blue-600 md:px-4 md:py-2 md:text-base"
         >
           {canvasDevice?.presetId ? "Update Preset" : "Save Preset"}
         </button>
