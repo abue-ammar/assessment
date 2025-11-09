@@ -66,7 +66,7 @@ export function FanVisualization({
   return (
     <div className="relative flex h-full w-full items-center justify-center">
       <div
-        className={`relative ${power && speed > 0 ? "fan-spinning" : ""}`}
+        className={`relative scale-75 md:scale-100 ${power && speed > 0 ? "fan-spinning" : ""}`}
         style={{
           animationDuration: power ? animationDuration : "0s",
           width: "320px",
@@ -85,8 +85,9 @@ export function FanVisualization({
             position: "absolute",
             width: "80px",
             height: "80px",
-            left: "120px",
-            top: "120px",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
             background: "linear-gradient(135deg, #4A5565 0%, #1E2939 100%)",
             border: "4px solid #364153",
             boxShadow: "0px 25px 50px -12px rgba(0, 0, 0, 0.25)",

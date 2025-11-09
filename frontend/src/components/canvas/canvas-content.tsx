@@ -30,7 +30,7 @@ export function CanvasContent({
   return (
     <div
       ref={setNodeRef}
-      className={`relative flex flex-1 items-center justify-center overflow-hidden rounded-xl border p-6 pb-32 transition-colors ${
+      className={`relative flex flex-1 items-center justify-center overflow-hidden rounded-xl border p-6 pb-24 transition-colors md:pb-32 ${
         isOver
           ? "border-blue-500 bg-slate-900"
           : "border-slate-800 bg-slate-900/50"

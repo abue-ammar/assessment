@@ -6,7 +6,10 @@ interface LightBulbProps {
 
 export function LightBulb({ power, glowIntensity, bulbColor }: LightBulbProps) {
   return (
-    <div className="relative" style={{ width: "128px", height: "196px" }}>
+    <div
+      className="relative scale-75 md:scale-100"
+      style={{ width: "128px", height: "196px" }}
+    >
       {/* Bulb Cap */}
       <div
         className="absolute rounded-t-md"
