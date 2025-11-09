@@ -1,5 +1,11 @@
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
-import { DndContext } from "@dnd-kit/core";
+import {
+  DndContext,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import { Canvas } from "./components/canvas/canvas";
@@ -22,6 +28,16 @@ export default function App() {
   const canvasDevice = useAppStore((state) => state.canvasDevice);
   const loadDevices = useAppStore((state) => state.loadDevices);
   const loadPresets = useAppStore((state) => state.loadPresets);
+
+  // Configure sensors for both mouse and touch
+  const mouseSensor = useSensor(MouseSensor);
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 250,
+      tolerance: 5,
+    },
+  });
+  const sensors = useSensors(mouseSensor, touchSensor);
 
   // Load devices and presets from backend on mount
   useEffect(() => {
@@ -93,8 +109,12 @@ export default function App() {
   };
 
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="relative flex h-screen bg-[#030712] text-white">
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="relative flex h-screen flex-col overflow-hidden bg-[#030712] text-white md:flex-row">
         <Sidebar activeDevice={activeDevice} onDeviceSelect={setActiveDevice} />
         <Canvas />
         {!canvasDevice && <DragIndicator />}

@@ -42,7 +42,7 @@ export function Canvas() {
   ];
 
   return (
-    <div className="relative flex flex-1 flex-col p-6">
+    <div className="relative flex flex-1 flex-col p-4 md:p-6">
       <CanvasHeader />
       <CanvasContent
         hasDevice={!!canvasDevice}

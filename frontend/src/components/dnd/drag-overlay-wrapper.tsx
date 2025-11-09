@@ -1,5 +1,5 @@
 import { DragOverlay } from "@dnd-kit/core";
-import { Lightbulb, Wind } from "lucide-react";
+import { Fan, Lightbulb } from "lucide-react";
 
 interface DragData {
   type: string;
@@ -30,7 +30,7 @@ export function DragOverlayWrapper({
     if (activeData?.type === "fan") {
       return (
         <div className="flex items-center gap-3 rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 text-white shadow-2xl">
-          <Wind size={18} />
+          <Fan size={18} />
           <span>Fan</span>
         </div>
       );
