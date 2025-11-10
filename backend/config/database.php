@@ -29,19 +29,19 @@ class Database {
         $isRailway = $_ENV['RAILWAY_ENV'] ?? false;
 
         // Set DB configuration
-        if ($isRailway) {
+       if ($isRailway) {
             // Railway internal host (works only inside Railway)
-            $this->host = $_ENV['DB_HOST'] ;
-            $this->port = $_ENV['DB_PORT'] ;
+            $this->host = $_ENV['DB_HOST'] ?? 'mysql.railway.internal';
+            $this->port = $_ENV['DB_PORT'] ?? 3306;
         } else {
             // Local development using public Railway proxy
-            $this->host = $_ENV['DB_HOST'];
-            $this->port = $_ENV['DB_PORT'];
+            $this->host = $_ENV['DB_HOST'] ?? 'maglev.proxy.rlwy.net';
+            $this->port = $_ENV['DB_PORT'] ?? 14735;
         }
 
-        $this->db_name  = $_ENV['DB_NAME'];
-        $this->username = $_ENV['DB_USER'] ;
-        $this->password = $_ENV['DB_PASS'] ;
+        $this->db_name  = $_ENV['DB_NAME'] ?? 'smart_device_control';
+        $this->username = $_ENV['DB_USER'] ?? 'root';
+        $this->password = $_ENV['DB_PASS'] ?? '';
     }
 
     private function loadEnvFallback() {
