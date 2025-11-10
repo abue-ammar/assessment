@@ -33,7 +33,21 @@ Create database and tables:
 mysql -u${DB_USER:-root} -p < backend/database.sql
 ```
 
+# Install PHP dependencies (phpdotenv required for env loading)
+
+Run from project root or change into the backend directory first:
+
+```bash
+# from repo root
+composer require vlucas/phpdotenv --working-dir=backend
+
+# OR, from inside backend/
+cd backend && composer require vlucas/phpdotenv
+```
+
 Start PHP development server:
+
+run from root directory
 
 ```bash
 php -S localhost:8000 -t backend backend/router.php

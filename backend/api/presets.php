@@ -1,27 +1,8 @@
 <?php
-/**
- * Presets API
- */
 
-// CORS Configuration
-$allowedOrigins = ['http://localhost:5173'];
-$origin = $_SERVER['HTTP_ORIGIN'] ?? null;
-
-if ($origin && in_array($origin, $allowedOrigins)) {
-    header("Access-Control-Allow-Origin: $origin");
-    header("Access-Control-Allow-Credentials: true");
-}
-
+// cors handling
+require_once __DIR__ . '/cors.php';
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204);
-    exit();
-}
 
 require_once __DIR__ . '/../config/database.php';
 
@@ -33,7 +14,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 try {
     switch($method) {
         case 'GET':
-            // Get ID from URL path (e.g., /api/presets/1)
+            // Get ID from URL path (/api/presets/1)
             $uri = $_SERVER['REQUEST_URI'];
             $uri_parts = explode('/', trim(parse_url($uri, PHP_URL_PATH), '/'));
             $id = (count($uri_parts) > 2 && is_numeric(end($uri_parts))) ? end($uri_parts) : null;
